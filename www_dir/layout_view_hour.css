@@ -1,0 +1,52 @@
+/* Classes */
+
+a.control_link {
+ font-size: 150%
+}
+
+td.interval_image {
+
+}
+
+
+/* IDS */
+
+#hour_container {
+ position: absolute;
+ top:  0px;
+ left: 0px;
+}
+
+#hour_title {
+}
+
+
+#interval_container {
+ position: absolute;
+ top:  0px;
+ left: 800px;
+
+ align: center;
+}
+
+#interval_title {
+}
+
+
+#interval_table {
+
+}
+
+
+#control_bar {
+ align: center;
+ background-color: #ABABAB;
+}
+
+/*
+#control_bar {
+ position: absolute;
+ top:  23px;
+ left: 0px;
+}
+*/

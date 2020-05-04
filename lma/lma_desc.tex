@@ -1,0 +1,276 @@
+\documentclass[12pt]{article}
+\newif\ifpdf
+\ifx\pdfoutput\undefined
+    \pdffalse           % we are not running PDFLaTeX
+\else
+    \pdfoutput=1        % we are running PDFLaTeX
+    \pdftrue
+\fi
+%----------------------------------------------------------------------
+\ifpdf
+    \usepackage[pdftex,
+        letterpaper=true,
+        colorlinks=true,
+        urlcolor=rltblue,               % \href{...}{...}
+        anchorcolor=rltbrightblue,
+        filecolor=rltgreen,             % \href*{...}
+        linkcolor=rltred,               % \ref{...} and \pageref{...}
+        menucolor=webdarkblue,
+        citecolor=webbrightgreen,
+        pdftitle={LMA Display Software Documentation},
+        pdfauthor={William Rison, LMA Technologies, LL;New Mexico Tech},
+        pagebackref,
+        pdfpagemode=None,
+        bookmarksopen=true]{hyperref}
+    \pdfcompresslevel=9
+    \usepackage[pdftex]{graphicx}
+    \usepackage{thumbpdf}
+\else
+    \usepackage[dvips,
+        letterpaper=true,
+        colorlinks=true,
+        urlcolor=rltblue,               % \href{...}{...}
+        anchorcolor=rltbrightblue,
+        filecolor=rltgreen,             % \href*{...}
+        linkcolor=rltred,               % \ref{...} and \pageref{...}
+        menucolor=webdarkblue,
+        citecolor=webbrightgreen]{hyperref}
+    \usepackage{graphicx}
+\fi
+
+\usepackage[czech]{babel}
+\usepackage{color}
+\definecolor{rltbrightred}{rgb}{1,0,0}
+\definecolor{rltred}{rgb}{0.75,0,0}
+\definecolor{rltdarkred}{rgb}{0.5,0,0}
+%
+\definecolor{rltbrightgreen}{rgb}{0,0.75,0}
+\definecolor{rltgreen}{rgb}{0,0.5,0}
+\definecolor{rltdarkgreen}{rgb}{0,0,0.25}
+%
+\definecolor{rltbrightblue}{rgb}{0,0,1}
+\definecolor{rltblue}{rgb}{0,0,0.75}
+\definecolor{rltdarkblue}{rgb}{0,0,0.5}
+
+\definecolor{webred}{rgb}{0.5,.25,0}
+\definecolor{webblue}{rgb}{0,0,0.75}
+\definecolor{webgreen}{rgb}{0,0.5,0}
+
+
+\setlength{\parskip}{1ex}
+%\hoffset=-.750in
+\hoffset=-55pt
+%\voffset=-.741in
+\voffset=-60pt
+\textheight=9in
+\textwidth=6.5in
+\begin{document}
+
+
+\begin{center}
+LMA Display and Processing Software
+\end{center}
+
+The software and display directories will be owned by a user on the system.  In the
+discussion below I will assume the username is {\tt lma\_admin}.  The root directory of the
+scripts and data is {\tt \$HOME/lma}. The root directory for the web display scripts and
+images is a directory with a name like {\tt /var/www/html/oklma} and is called {\tt
+www\_dir} in the discussion below.
+
+
+The directory {\tt \$HOME/lma} contains the file {\tt lma\_config} and the subdirectories
+{\tt bin}, {\tt display}, {\tt incoming}, {\tt loc}, {\tt log}, {\tt realtime}, {\tt recent},
+{\tt status} and {\tt tmp}.
+
+\begin{description}
+\item[{\tt lma\_config}]:  File used to configure the display software
+\item[{\tt bin}]: Most executable scripts and programs
+\item[{\tt display}]: Scripts and data for producing web images
+\item[{\tt incoming}]: Directory to temporarily store real-time data files from the LMA
+stations
+\item[{\tt loc}]: Directory to hold gps file for LMA used in processing the raw data
+\item[{\tt log}]: Directory to hold the daily log files from each LMA station used in
+producing the daily status plots.  Each station will have its own sub-directory inside {\tt
+\$HOME/log}.  The name of each sub-directory will be the upper case of the station letter --
+e.g. {\tt \$HOME/log/B}.
+\item[{\tt realtime}]: Dirctory to hold the real-time raw and processed data files.  This has
+three sub-directories:
+\begin{description}
+\item [{\tt rt\_data}]:  Used to hold the raw real-time data files.  There will be a
+sub-directory for each day in the format YYMMDD, followed by a sub-directory for each hour
+in the format HH, followed by a sub-directory for each minute in the format MM. For example
+the raw data for the minute 11:07 to 11:08 on May 1, 2020 will go into the sub-directory
+{\tt \$HOME/lma/realtime/rt\_data/200501/11/07}.  The sub-directories will be made as needed
+by the script which pulls data files out of {\tt \$HOME/lma/incoming}.  Periodically the
+one-minute raw real-time files should be removed from the system.  This can be done by
+adding a line like this to {\tt lma\_admin}'s {\tt crontab} file:
+
+\verb? 0 14 * * *  /usr/bin/find $HOME/lma_admin/lma/realtime/rt_data/ \? \\
+\verb?             -type d -ctime +3 -exec /bin/rm -r \{\} \\; \? \\
+\verb?             1>/dev/null 2>/dev/null?
+
+\item [{\tt processed\_data}]:  The one-minute processed data files produced from the
+one-minute raw data files.  As for the {\tt rt\_data} directory, the {\tt processed\_data}
+directory will have sub-directories in the format {\tt YYMMDD/HH/MM}.  
+\item [{\tt archive}]:  On a regular bases the one-minute processed data files should be
+concatenated into hour-long data files and stored in {\tt
+\$HOME/lma/realtime/archive/YYMMDD}.  The one minute processed data files can then be
+deleted.
+\end{description}
+
+
+\item [{\tt recent}]:  This directory holds the last hour's worth of processed LMA data in python
+numpy {\tt .npy} format.  When the data files are moved out of {\tt \$HOME/lma/incoming}
+into {\tt \$HOME/lma/realtime/rt\_data} the script produces a numpy {\tt .npy} file of the
+data.  This is done so the scritps which use the data for producing images don't need to
+re-read and re-parse the gzipped ASCII processed data files.  You might want to link this to a tmpfs filesystem 
+to improve system performance.
+
+\item [{\tt status}]:  This directory holds the hourly status files from the LMA stations
+which are used to produce the status page.
+
+\item [{\tt tmp}]:  For temporary files.  You might want to link to a tmpfs filesystem.
+
+\end{description}
+
+The file {\tt \$HOME/lma/lma\_config} holds configuration information for the network. Here
+is an example {\tt lma\_config} file:
+
+\begin{verbatim}
+Location:     Oklahoma
+gps_file:     $HOME/lma/loc/oklma.gps
+www_dir:      /var/www/html/oklma
+prefix:       OKLMA                # Prefix for real time LMA data files
+station_id:   ok_                  # Prefix for LMA station names
+z1:           300
+z2:           150
+z3:           60
+anim_len:     180                  # Length of animation in minutes
+url:          http://localhost/oklma
+delay:        30
+\end{verbatim}
+
+\begin{description}
+\item [{\tt Location}]: The location of the network.  This will be used as the title on web
+pages and images.
+\item [{\tt gps\_file}]: The name and location of the gps file. This file is used by 
+{\tt \$HOME/lma/bin/lma\_analysis} for processing the raw data files and is used by 
+{\tt \$HOME/lma/display/makeLmaImages.py} for finding the station locations to plot on web
+images.
+\item [{\tt www\_dir}]: The name of the web directory where the image files will be put.
+\item [{\tt prefix}]: The prefix of the LMA processed data files.  
+\item [{\tt station\_id}]: The ID of the LMA stations.  An LMA station typically has a hostname like "\verb+ok_a+"
+\item [{\tt z[123]}]: The three zoom levels to display on the real-time web pages.  A zoom of 300 means that a distance of +/-300 km from the
+network center will be displayed.
+\item [{\tt url}]: The URL of the web pages.
+\item[{\tt delay}]:  The number of seconds to wait for the real-time data files to arrive.  A delay of 30 means that will start processing the
+previous minute of data at 30 seconds after the minute.
+\end{description}
+
+The directory {\tt \$HOME/lma/bin} holds the scripts and programs for the data flow.  
+
+The script {\tt \$HOME/lma/bin/LMA\_Realtime.py} is a simple script which does one thing:  it calls the script {\tt
+\$HOME/lma/bin/get\_minte\_data.py} once a minute.  There are two ways data can get from the LMA stations to the server -- 1) if the stations
+have public IP adresses the server can pull the data from the stations; or 2) if the stations do not have public IP addresses then the
+stations need to push their data to the server.  If the server pulls the data {\tt LMA\_Realtime.py} will call {\tt get\_minute\_data.py} at a
+few seconds after the minute.  If the stations push the data to the server {\tt LMA\_Realtime.py} should call {\tt get\_minute\_data.py} after
+a delay which is long enough that all (or most) of the stations have time to push their data into {\tt \$HOME/lma/incoming}.   This depends on
+the speed of the real-time links to the LMA stations.  The length of the delay is specified in the {\tt delay:} line in the file {\tt
+\$HOME/lma/lma\_config}.
+
+The script {\tt \$HOME/lma/bin/get\_minute\_data.py} gets the latest minute of data from the
+LMA stations, puts the data into the correct directory in {\tt \$HOME/lma/realtime/rt\_data}, 
+calls the program {\tt \$HOME/lma/bin/lma\_analysis} which processes the data, and calls the
+script {\tt \$HOME/lma/display/makeLmaImages.py} which makes the web images.  At this point
+the script {\tt get\_minute\_data.py} assumes the stations push the realtime data into 
+{\tt \$HOME/lma/incoming}.  If the server needs to pull the data {\tt get\_minute\_data.py}
+needs to add code to pull the data from the stations.  The script \verb+get_minute_data.py+ also parses the processed real-time data files and
+stores the processed data as \verb+numpy+ arrays in \verb+$HOME/lma/recent+.  Each row in the \verb+numpy+ array represents one LMA source.
+There are eleven columns in the array:
+\begin{description}
+\item [Column 0]: The unix second for the day.
+\item [Column 1]: The time of the LMA source in seconds after midnight.
+\item [Column 2]: The latitude of the LMA source.
+\item [Column 3]: The longitude of the LMA source.
+\item [Column 4]: The latitude of the LMA source.
+\item [Column 5]: The reduced chi$^2$ goodness of fit for the LMA source.
+\item [Column 6]: The receive power (in dBW) of the LMA source.
+\item [Column 7]: The station mask for the LMA source.
+\item [Column 8]: The number of stations which detected the LMA source
+\item [Column 9]: The position of the source east of the array center (in meters)
+\item [Column 10]: The position of the source north of the array center (in meters)
+\end{description}
+
+The script {\tt \$HOME/lma/bin/health\_summary.py} takes the hourly status files in 
+{\tt \$HOME/lma/status} and produces the web status page.  At this point
+the script {\tt health\_summary.py} assumes the stations push the status files into 
+{\tt \$HOME/lma/status}.  If the server needs to pull the status files {\tt health\_summary.py}
+needs to add code to pull the status files from the stations.
+
+The script {\tt \$HOME/lma/bin/hist\_plot.py} takes the daily log files in 
+{\tt \$HOME/lma/log} and produces the web status images.  At this point
+the script {\tt hist\_plot.py} assumes the stations push the log files into 
+{\tt \$HOME/lma/status}.  If the server needs to pull the log files {\tt hist\_plot.py}
+needs to add code to pull the log files from the stations.
+
+The script {\tt \$HOME/lma/display/makeLmaImages.py} makes the images for web display.  The script is called like this:\\
+\verb+$HOME/lma/display/makeLmaImages.py 20 4 29 22 58+\\
+This says to make image files for April 29, 2002 for 22:58.  If the minute is not modulo 9, the script will make images that go into 
+\verb+www_dir/current+ and it will make a geo-located PNG which can be loaded by Google Earth.  If the minute is module 9 the script will
+produce those files and archive files which go into \verb+www_dir/img/YY/MM/DD/HH+.  Once the script determines the minutes to use it will
+read the data for those minutes from \verb+$HOME/lma/recent+.
+
+The script {\tt \$HOME/lma/display/lma\_util.py} has some functions which are used by \verb+makeLmaImages.py+.
+
+The file {\tt \$HOME/lma/display/state.py} has some global variables used by \verb+makeLmaImages.py+.
+
+The file \verb+$HOME/lma/display/mapfile.npz+ is a \verb+numpy .npz+ file which contains boundary files for plotting on the real-time images.
+The file contains up to three arrays:  \verb+admin0+, \verb+admin1+ and \verb+poi+.  The  \verb+admin0+ and \verb+admin1+ arrays have two
+columns -- the latitudes and longitudes of the polygons to plot.  Polygons are separated with a row of (Nan, Nan).  \verb+admin0+ boundaries
+are plotted in red (typically state boundaries in the U.S. and country boundaries Europe).  \verb+admin1+ boundaries are plotted in light grey
+(typically county lines in the U.S. and major political sub-divisions in Europe).  \verb+poi+ files are just rows of latitudes and longitudes
+-- a red dot will be plotted at each \verb+poi+ location.
+
+The script \verb+$HOME/lma/display/extract_map_data.py+ can be used to generate \verb+mapfile.npz+. It reads shapefiles, U.S. Census Bureau Tiger ASCII files,
+and POI shape files.  
+
+The sub-directory \verb+$HOME/lma/display/maps+ has a shapefile for the U.S., Tiger ASCII files for the counties in all the states, and an
+example POI text file.
+
+The \verb+www_dir+ directory holds the images for display on the web and the scripts to display them.  Below is a description the some of the
+scripts and files in \verb+www_dir+.
+
+\begin{description}
+\item[{\tt www\_dir/station.txt}] This holds a list of the LMA stations in the network as well as some information used by some of the
+\verb+php+ scripts.  Here is an example of a \verb+stations.txt+ file:
+\begin{verbatim}
+Network  Oklahoma
+Prefix OKLMA
+B Bluff
+\end{verbatim}
+
+The \verb+Network+ name is used as the title for some of the web pages and the \verb+Prefix+ is used by the scripts to determine the name of
+the image files.  (\verb+Prefix+ should be the same as \verb+prefix+ in the \verb+$HOME/lma/lma_config+ file.)
+
+\item[{\tt www\_dir/index.php}] The main web page.  It uses the style sheets \verb+www_dir/files/style.css+ and
+\verb+www_dir/files/menu-style.css+.
+
+\item[{\tt www\_dir/cal.php}] A calendar display showing which days have real-time images.
+\item[{\tt www\_dir/current}] The sub-directory with scripts to display the current LMA images
+\item[{\tt www\_dir/googleearth.php}] A page showing how to load the Google Earth overlays
+\item[{\tt www\_dir/rt.php}] PHP script to display the thumbnails for a particular day.
+\item[{\tt www\_dir/view\_rthour.php}] PHP script to display the archived image and thumbnails for a particular hour.
+\item[{\tt www\_dir/view\_rt10min.php}] PHP script to display the archived image for a particular ten minute interval.
+\item[{\tt www\_dir/status.html}] The status web page created by \verb+$HOME/lma/bin/health_summary.py+.
+\item[{\tt www\_dir/desc.html}] A script which describes the columns of the \verb+status.html+ page.
+\item[{\tt www\_dir/stat\_plots.php}]  A page to show the daily status plots for each station.
+\item[{\tt www\_dir/plots/[ABCD...Z]}]  Sub-directories to hold the daily status plots for each station.
+\item[{\tt{www\_dir/img/YY/MM/DD/HH}}]: The sub-direcories which hold the archival images.
+\item[{\tt{www\_dir/geo\_images}}]: A sub-directory which holds the Google Earth geo-referenced images, a KML file to load those images, and
+sample image used by \verb+googleearth.php+.
+
+\end{description}
+
+ 
+
+\end{document}

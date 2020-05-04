@@ -1,0 +1,33 @@
+<HTML>
+<HEAD>
+<TITLE> Conghua LMA Realtime Calendar </TITLE>
+<META NAME="Keywords" CONTENT="lightning, realtime, lma, langmuir">
+<link rel="stylesheet" type="text/css" href="style.css">
+</HEAD>
+<BODY>
+<br>
+<table border="0" cellpadding="0" width="90%" bgcolor="#cccccc" cellspacing="1" align="center">
+<tr>
+<td>
+<table border="0" cellpadding="0" width="100%" bgcolor="#ffffff" cellspacing="0" align="center">
+ <tr>
+ <td width="20%" bgcolor="#ffffff" class="smallgrey" align="left">&nbsp;<A HREF="?year2view=$prevyear">View Previous Year</A></td> 
+ <td bgcolor="#ffffff" class="smallgrey" align="center"><A HREF="?year2view=$currentyear">View Current Year $currentyear</A></td>
+ <td width="20%" bgcolor="#ffffff" class="smallgrey" align="right"><A HREF="?year2view=$nextyear">View Next Year</A>&nbsp;</td>
+ </tr>
+ <tr>
+ <td width="20%" bgcolor="#ffffff" class="smallgrey" align="left">&nbsp;$prevyear</td>
+ <td bgcolor="#ffffff" class="smallgrey" align="center"></td>
+ <td width="20%" bgcolor="#ffffff" class="smallgrey" align="right">$nextyear&nbsp;</td>
+ </tr>
+</table>
+</td>
+</tr>
+</table>
+
+<table border="0" cellpadding="8" width="90%" bgcolor="#ffffff" cellspacing="4" align="center">
+	$fullcalendar
+</table>
+
+</BODY>
+</HTML>

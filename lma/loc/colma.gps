@@ -1,0 +1,79 @@
+# Survey file for LMA stations
+#
+# Data format for stations (one line per station):
+#
+#   station letter (single character)
+#   station identifier (number between 0 and 255)
+#   station mnemonic name (string without spaces)
+#   GPS latitude (deg)
+#   GPS longitude (deg)
+#   GPS altitude (m)
+#   VHF plan distance (m)
+#   VHF bearing (degrees to true north)
+#   VHF elevation (degrees, measured to base of vertical dipole element)
+#   cable delay (ns)
+#   LMA board revision #
+#   receiver channel #
+#   start date of the form YYYYMMDD.HHMMSS in UTC
+#   end date of the form YYYYMMDD.HHMMSS in UTC
+#
+#   To calculate cable delay in ns, use 
+#
+#     dt = 1.0e9 * length(m) / ((v/c)*c)
+#
+#   Langmuir Lab's TDR (incorrectly) assumes v/c = 0.67.  c is assumed 
+#   to be 299,792,458 m/s.
+#
+#   This value for v/c underestimates cable lengths: 90 ft for a 104 ft 
+#   RG-6 cable as found in 2009.  But this is irrelevant in calculating
+#   delay times as long as the same value for v/c is used.
+#
+#   Using the above, to convert from TDR cable length L in feet to delay dt in ns:
+#
+#     dt = 1.51746770472 L
+#
+# First non-comment line of this file must be the coordinate origin of the form:
+#
+# "0 <LMA_ID> <LMA_name> lat lon alt"
+#     LMA_name must be a single string without spaces, e.g. LL, TTU, etc
+#     LMA_ID is network ID (number between 1 and 255; 0 is reserved)
+#
+# LMA network ID list:
+#  0 (reserved)
+#  1 LL
+#  2 STEPS
+#  3 AL
+#  4 OK
+#  5 WSMR
+#  6 TTU
+#  7 PNTX
+#  8 DC
+#  ....
+#
+# Lines preceded by a # are treated as comments and disregarded.
+#
+# Survey file version
+#
+version 2
+#
+# Coordinate origin
+#
+0 255 COLMA  40.44639800 -104.63681300  1000.00
+#
+# List of stations
+#
+B   2 Rodenburg      40.47313690 -104.31674957  1470.94   0.00   0   0  45 3  3 19980101.000000 20991231.235959
+C   3 Briggsdale     40.63360596 -104.32122040  1485.60   0.00   0   0  45 3  3 19980101.000000 20991231.235959
+D   4 LoneTree       40.94158554 -104.038948069 1666.38   0.00   0   0  45 3  3 19980101.000000 20991231.235959
+E   5 GreeleyArpt    40.44333267 -104.62873077  1412.24   0.00   0   0  45 3  3 19980101.000000 20991231.235959
+F   6 Raymer         40.59933090 -103.799575806 1435.52   0.00   0   0  45 3  3 19980101.000000 20991231.235959
+G   7 FtCollinsArpt  40.44247818 -105.00157166  1528.39   0.00   0   0  45 3  3 19980101.000000 20991231.235959
+H   8 Herford        40.97035980 -104.291320801 1605.89   0.00   0   0  45 3  3 19980101.000000 20991231.235959
+J  10 Homestead      40.87567520 -103.89794159  1608.09   0.00   0   0  45 3  3 19980101.000000 20991231.235959
+K  11 Purcell        40.68551254 -104.58275604  1575.79   0.00   0   0  45 3  3 19980101.000000 20991231.235959
+N  14 CPER           40.84128571 -104.76268768  1666.71   0.00   0   0  45 3  3 19980101.000000 20991231.235959
+P  16 WeldCHS        40.06859589 -104.51261139  1525.95   0.00   0   0  45 3  3 19980101.000000 20991231.235959
+R  18 ButteEdge      40.81647873 -104.05730438  1675.18   0.00   0   0  45 3  3 19980101.000000 20991231.235959
+S  19 Boyer          40.32522583 -103.74810791  1344.34   0.00   0   0  45 3  3 19980101.000000 20991231.235959
+T  20 FMA            40.67021942 -104.93829346  1655.68   0.00   0   0  45 3  3 19980101.000000 20991231.235959
+U  21 WigginsHS      40.22440338 -104.07551575  1376.68   0.00   0   0  45 3  3 19980101.000000 20991231.235959

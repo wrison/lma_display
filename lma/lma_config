@@ -1,0 +1,12 @@
+Location:     Oklahoma
+gps_file:     $HOME/lma/loc/oklma.gps
+www_dir:      /var/www/html/lma
+prefix:       LYLOUT               # Prefix for real time LMA data files
+station_id:   ok_                  # Prefix for LMA station names
+z1:           300
+z2:           150
+z3:           60
+anim_len:     180                  # Length of animation in minutes
+nsew_limits:  38.9 31.7 -93.5 -102.3
+url:          http://localhost/lma
+delay:        30

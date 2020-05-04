@@ -1,0 +1,15 @@
+Network  Oklahoma
+Prefix LYLOUT
+B Rodenberg
+C Briggsdale
+D LoneTree
+E GreelyArpt
+F Raymen
+G FtCollinsApt
+H Hereford
+K Purcell
+P WeldCHS
+R ButteEdge
+S Boyer
+T FMA
+U Wiggins

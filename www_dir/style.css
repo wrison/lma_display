@@ -1,0 +1,32 @@
+/* settings for the body */
+body {
+ font-size: 8pt; color: #000000; font-style: normal;  font-family: Arial, Verdana;
+}
+
+/* Default table data settings */
+td {
+ color: black; font-size: 8pt; font-family: Arial, Verdana; text-align: center;
+}
+
+td.header, td.footer {
+ color: brown; font-weight: bold;
+ background-color: #E0E0E0; background-image: url(images/boxbg.gif);
+}
+
+td.time_stamp {
+ font-weight: bold;
+ background-color: #F0F0F0; background-image: url(images/boxbg.gif);
+}
+
+td.pdaybg {
+ color: #333333;
+ background-image: url(images/pday.gif);
+ background-position : center;
+ background-repeat : no-repeat;
+}
+
+/* Links */
+a:visited { text-decoration: none; color: brown		}
+a:active  { text-decoration: none; color: #FF9966	} 
+a:link    { text-decoration:none; color: brown		}
+a:hover   { text-decoration: underline; color: #FF6600	}

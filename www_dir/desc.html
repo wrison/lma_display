@@ -1,0 +1,163 @@
+<html>
+<head><title>LMA Status Descriptions</title></head>
+
+<body>
+
+<h3><a name = "station">station:</a></h3> The LMA station identifier<br>
+<p>
+
+<h3><a name = "name">name:</a></h3> The LMA station name<br>
+<p>
+
+<h3><a name = "status">status:</a></h3> "up" indicates the LMA station is working.  "down"
+indicates the LMA station has not reported its status recently, so is probably offline or
+off.  The "sdate" and "stime" fields show the last time the station reported its status.
+"offline" indicates the system has no information on the last time the station reported its
+status.
+
+<h3><a name = "sdate">sdate:</a></h3> The Linux system date, from the BIOS
+clock.  
+
+<h3><a name = "stime">stime:</a></h3> The Linux system time, from the BIOS
+clock.
+
+<h3><a name = "load">load:</a></h3> The system load.  x/y/z minute
+load average.  x = 1 minute average, y = 5 minute average, z = 15
+minute average.  Unless doing something major, these numbers should
+all be much less than unity.  (The one minute one might vary a bit,
+but for sure, you should generally see the 15 minute average be very
+close to zero, or else there may be a process consuming too much of the 
+CPU.)
+
+<h3><a name = "uptime">uptime:</a></h3> The amount of time since the
+last reboot.
+
+<h3><a name = "duty">duty:</a></h3> The percentage of time the station
+was taking data in the last 30 days
+
+<h3><a name = "slash">/:</a></h3> The percent of full capacity for the /
+partition.  (/ is where the core OS is located.)  Should always be in the
+neighborhood of 80-90%.  LMA data gets stored on separate partitions (see
+below).
+
+<h3><a name = "boot">/boot</a></h3> The percent of full capacity for 
+the /boot partition if there is one.
+
+<h3><a name = "shm">/dev/shm</a></h3> The percent of full capacity for
+the /dev/shm filesystem.
+
+<h3><a name = "data">/data:</a></h3> The percent of full capacity for
+the /data partition.  This is the primary data partition for the
+USB solid-state hard-disk.  
+
+<h3><a name = "pid">PID:</a></h3> This is the process ID for the
+lma_DataHandler program (the program which actually collects data from
+the LMA board, and writes it to shared memory).  If there's a number there,
+then it is running.  If there isn't a number, there is a problem.  Note, no
+checking is done to ensure that only one process is running, so this isn't a
+perfect test, but if there's a number there, and the rest of the other things
+below are okay, we are golden.  
+
+<h3><a name = "pidrd">PIDRD:</a></h3> This is the process ID of the 
+lma_ReadData program, the daemon which reads LMA data out of shared memory and
+writes it to a data file.
+
+<h3><a name = "pidtl">PIDTL:</a></h3> This is the process ID of the 
+lma_TrigLog program, the daemon which reads LMA status out of shared memory
+and writes it to a trigger file.
+
+<h3><a name = "pidat">PIDAT:</a></h3> This is the process ID of the 
+lma_AutoThresh program, the daemon which adjusts the threshold.
+
+<h3><a name = "piddec">PIDDEC:</a></h3> This is the process ID of the 
+lma_Decimate program, the daemon which reads LMA data out of shared memory,
+decimates it, and sends it to the real-time processing computer.
+
+<h3><a name = "pphase">Phase:</a></h3> The phase count of the oscillator --
+the difference between 25,000,000 and the actual number of cycles for the
+local data clock.
+
+<h3><a name = "pdate">pdate:</a></h3> This is the date, as reported by
+LMA board.
+
+<h3><a name = "ptime">ptime:</a></h3> This is the time, as reported by
+the LMA board.
+
+<h3><a name = "temp">temp:</a></h3> This is the temperature (Celsius)
+of the LMA board.
+
+<!--
+<h3><a name = "rh">RH:</a></h3> This is the relative humidity (raw
+uncalibrated scale) at the LMA board.
+-->
+
+<h3><a name = "gps">gps:</a></h3> The number of satellites being
+tracked by the GPS receiver, as reported by the LMA board.
+
+<h3><a name = "ctrig">current trigfile:</a></h3> The name of the
+current trigger log file, for a recent second.  
+(Trigger logs are found in the directory /home/lma/log/.)
+
+<h3><a name = "trigid">trig ID:</a></h3> The station letter, as
+reported in the trigger log, for a recent second.
+
+<h3><a name = "tdate">tdate:</a></h3> The date, as reported in the
+trigger log file, for a recent second.
+
+<h3><a name = "ttime">ttime:</a></h3> The time, are reported in the
+trigger log file, for a recent second.
+
+<h3><a name = "tver">tver:</a></h3> The firmware version for the LMA
+board, as reported in the trigger log file, for a recent second.
+
+<h3><a name = "tthresh">tthresh:</a></h3> The threshold (in dBm) of
+the station, as reported in the trigger log file, for a recent second.  
+
+<h3><a name = "ttrigs">ttrigs/s:</a></h3> The current trigger rate as
+reported by the trigger log file, for a recent second.
+
+<h3><a name = "tsat">tsat:</a></h3> The number of satellites being
+tracked by the GPS receiver, as reported in the trigger log file, for
+a recent second.
+
+<h3><a name = "ttemp">ttemp:</a></h3> The temperature (Celsius) as
+reported in the trigger log file, for a recent second.
+
+<h3><a name = "fl0">files today</a></h3> This is the count of
+number of data files collected for the current day.  There should be 6
+ten-minute files per hour.
+
+<h3><a name = "fl1">files today-1</a></h3> This is the count of
+number of data files collected for yesterday.  If all is well, this should be
+144 (6 files per hour times 24 hours).
+
+<h3><a name = "fl2">files today-2</a></h3> This is the count of
+number of data files collected for two days ago.  If all is well, this should
+be 144 (6 files per hour times 24 hours).
+
+<h3><a name = "datafile">current datafile:</a></h3> The data file
+which the lma_DataHandler program is current writing to (assuming it
+is currently active, otherwise it would be the one last written to).  The data
+files are in the directory /home/lma/data/YYMMDD.
+
+<h3><a name = "vp1">vp1</a></h3> Voltage of solar panel 1
+<h3><a name = "vp2">vp2</a></h3> Voltage of solar panel 2
+<h3><a name = "cp1">cp1</a></h3> Current of solar panel 1
+<h3><a name = "cp2">cp2</a></h3> Current of solar panel 2
+<h3><a name = "vb1">vb1</a></h3> Voltage of battery 1
+<h3><a name = "vb2">vb2</a></h3> Voltage of battery 2
+<h3><a name = "cb1">cb1</a></h3> Current of battery 1
+<h3><a name = "cb2">cb2</a></h3>Current of battery 2
+<h3><a name = "vl">vl</a></h3> Voltage to load
+<h3><a name = "cl">cl</a></h3> Current to load
+
+<h3><a name = "rtt">decimation status</a></h3> This indicates whether the
+decimation process has stopped working.  (The decimation can stop working when
+the Internet dies -- the decimation program tries to send data to a
+no-longer-active Internet, which hangs the program.) If so, log onto the
+station and give the command "/root/bin/lma_restart.pl".  There is a cron
+process which checks to make sure the decimation program is active, so this
+should be done automatically.
+
+</body>
+</html>

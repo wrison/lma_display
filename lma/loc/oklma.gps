@@ -1,0 +1,81 @@
+# Survey file for LMA stations
+#
+# Data format for stations (one line per station):
+#
+#   station letter (single character)
+#   station identifier (number between 0 and 255)
+#   station mnemonic name (string without spaces)
+#   GPS latitude (deg)
+#   GPS longitude (deg)
+#   GPS altitude (m)
+#   VHF plan distance (m)
+#   VHF bearing (degrees to true north)
+#   VHF elevation (degrees, measured to base of vertical dipole element)
+#   cable delay (ns)
+#   LMA board revision #
+#   receiver channel #
+#   start date of the form YYYYMMDD.HHMMSS in UTC
+#   end date of the form YYYYMMDD.HHMMSS in UTC
+#
+#   To calculate cable delay in ns, use 
+#
+#     dt = 1.0e9 * length(m) / ((v/c)*c)
+#
+#   Langmuir Lab's TDR (incorrectly) assumes v/c = 0.67.  c is assumed 
+#   to be 299,792,458 m/s.
+#
+#   This value for v/c underestimates cable lengths: 90 ft for a 104 ft 
+#   RG-6 cable as found in 2009.  But this is irrelevant in calculating
+#   delay times as long as the same value for v/c is used.
+#
+#   Using the above, to convert from TDR cable length L in feet to delay dt in ns:
+#
+#     dt = 1.51746770472 L
+#
+# First non-comment line of this file must be the coordinate origin of the form:
+#
+# "0 <LMA_ID> <LMA_name> lat lon alt"
+#     LMA_name must be a single string without spaces, e.g. LL, TTU, etc
+#     LMA_ID is network ID (number between 1 and 255; 0 is reserved)
+#
+# LMA network ID list:
+#  0 (reserved)
+#  1 LL
+#  2 STEPS
+#  3 AL
+#  4 OK
+#  4 WSMR
+#  6 TTU
+#  7 PNTX
+#  8 DC
+#  ....
+#
+# Lines preceded by a # are treated as comments and disregarded.
+#
+# Survey file version
+#
+version 2
+#
+# Coordinate origin
+0 255 OKLMA  35.2791257 -97.9178678 0.0
+#
+# List of stations
+#
+A   1 Altus_Airport  34.6966360   -99.3406580    420.80   0.00   0   0 128 4  3 19980101.000000 20991231.235959
+B   2 Bluff          34.7679028   -99.5392690    498.10   0.00   0   0 239 4  3 19980101.000000 20991231.235959
+C   3 Chickasha_SE   35.0043455   -97.9073041    346.00   0.00   0   0 116 4  3 19980101.000000 20991231.235959
+D   4 Dutton         35.2451748   -98.0754888    432.30   0.00   0   0 293 4  3 19980101.000000 20991231.235959
+E   5 El_Reno        35.4785046   -98.0089380    421.80   0.00   0   0 158 4  3 19980101.000000 20991231.235959
+G   7 Goldsby        35.1325178   -97.5185999    382.30   0.00   0   0 141 4  3 19980101.000000 20991231.235959
+H   8 Chickasha_N    35.1299688   -97.9592651    351.00   0.00   0   0 199 4  3 19980101.000000 20991231.235959
+I   9 Minco_SE       35.2791257   -97.9178678    427.40   0.00   0   0 176 4  3 19980101.000000 20991231.235959
+L  12 Goldsby_S      35.1286754   -97.5122552    386.90   0.00   0   0  85 4  3 19980101.000000 20991231.235959
+M  13 Middleberg     35.1347170   -97.7256900    419.30   0.00   0   0 134 4  3 19980101.000000 20991231.235959
+N  14 Newcastle      35.2564560   -97.6589440    407.00   0.00   0   0 130 4  3 19980101.000000 20991231.235959
+O  15 Olustee        34.5195200   -99.4349400    398.90   0.00   0   0 157 4  3 19980101.000000 20991231.235959
+P  16 Prairie_Hill   34.5950200   -99.4936800    438.20   0.00   0   0 135 4  3 19980101.000000 20991231.235959
+R  18 Granite        34.9733400   -99.4487200    481.20   0.00   0   0 158 4  3 19980101.000000 20991231.235959
+U  21 Mangum         34.8592306   -99.3612390    463.40   0.00   0   0 184 4  3 19980101.000000 20991231.235959
+W  23 Minco_W        35.3622021   -98.0397279    422.70   0.00   0   0 213 4  3 19980101.000000 20991231.235959
+Y  25 Yukon          35.4402883   -97.7782383    413.30   0.00   0   0 162 4  3 19980101.000000 20991231.235959
+Z  26 Zombie         34.7115890   -99.0802670    415.90   0.00   0   0 210 4  3 19980101.000000 20991231.235959
