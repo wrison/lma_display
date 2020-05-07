@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Folder>
+	<name>LOCATION 10 Minute Density</name>
+	<open>1</open>
+    <Camera id="ID">
+      <!-- inherited from AbstractView element -->
+      <TimePrimitive>...</TimePrimitive>  <!-- gx:TimeSpan or gx:TimeStamp -->
+      <gx:ViewerOptions>
+        <option> name=" " type="boolean">     <!-- name="streetview", "historicalimagery", "sunlight", or "groundnavigation" -->
+        </option>
+      </gx:ViewerOptions>
+    
+      <!-- specific to Camera -->
+      <longitude>CTR_LNG</longitude>            <!-- kml:angle180 -->
+      <latitude>CTR_LAT</latitude>              <!-- kml:angle90 -->
+      <altitude>700000.0</altitude>              <!-- double -->
+      <heading>0</heading>                <!-- kml:angle360 -->
+      <tilt>0</tilt>                      <!-- kml:anglepos180 -->
+      <roll>0</roll>                      <!-- kml:angle180 -->
+      <altitudeMode>clampToGround</altitudeMode>
+            <!-- kml:altitudeModeEnum: relativeToGround, clampToGround, or absolute -->
+            <!-- or, gx:altitudeMode can be substituted: clampToSeaFloor, relativeToSeaFloor -->
+    </Camera> 
+     <ScreenOverlay>
+       <name>LOCATION 10 Min Souce Scale</name>
+       <visibility>1</visibility>
+       <Icon>
+         <href>CBAR_URL</href>
+   		 <refreshMode>onInterval</refreshMode>
+       	 <refreshInterval>10</refreshInterval>
+       </Icon>
+       <overlayXY x="0" y="1" xunits="fraction" yunits="fraction"/>
+       <screenXY x="0" y="1" xunits="fraction" yunits="fraction"/>
+       <rotationXY x="0" y="0" xunits="fraction" yunits="fraction"/>
+       <size x="0" y="0" xunits="fraction" yunits="fraction"/>
+    </ScreenOverlay>
+
+	<GroundOverlay>
+		<name>LOCATION 10 Minute Composite Image</name>
+		<visibility>1</visibility>
+		<color>c7ffffff</color>
+		<Icon>
+			<href>IMAGE_URL</href>
+	   		<refreshMode>onInterval</refreshMode>
+       		<refreshInterval>10</refreshInterval>
+			<viewBoundScale>0.75</viewBoundScale>
+		</Icon>
+		<altitude>3021</altitude>
+		<altitudeMode>clampToGround</altitudeMode>
+		<LatLonBox>
+			<north>NORTH</north>
+			<south>SOUTH</south>
+			<east>EAST</east>
+			<west>WEST</west>
+		</LatLonBox>
+	</GroundOverlay>
+</Folder>
+</kml>
