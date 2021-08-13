@@ -425,7 +425,7 @@ if __name__ == '__main__':
         state.eol_pngname = end_time.strftime(eol_basename+".png")
         state.eol_kmlname = end_time.strftime(eol_basename+".kml")
         eol_base_url = "https://catalog.eol.ucar.edu/arm_tracer/gis/{0}_lma/%Y%m%d/%H/".format((state.location).lower())
-        state.eol_catalogurl = end_time.strftime(eol_base_url + eol_pngname)
+        state.eol_catalogurl = end_time.strftime(eol_base_url + state.eol_pngname)
         state.eol_ftpserver = "catalog.eol.ucar.edu"
         state.eol_ftppath = "/pub/incoming/catalog/tracer"
 
@@ -442,6 +442,8 @@ if __name__ == '__main__':
              (state.lma[:,3]  > state.geo_min_lng)  & (state.lma[:,3]  < state.geo_max_lng)  &
              (state.lma[:,7] >= state.lma_limits['min_numsta']) &
              (state.lma_t > 0.0) )
+    else:
+        keep = []
     # Need these dimensions so plot is 1600 x 1600 pixels
     # The size is about 800 km x 800 km so each pixel is 0.5 km x 0.5 km
     FIGSIZE=(10.323,10.390)
@@ -509,13 +511,14 @@ if __name__ == '__main__':
             ftp = FTP(state.eol_ftpserver)  # connect to host, default port
             ftp.login()                     # user anonymous, passwd anonymous@
             ftp.cwd(state.eol_ftppath)      # change into "debian" directory
-            for filename_send in (outname, state.eol_pngname)
+            for filename_send in (outname, state.eol_pngname):
                 to_send = open(state.www_dir + "/geo_images/" + filename_send,'rb')
-                ftp.storbinary(filenamesend, to_send)
+                ftp.storbinary("STOR " + filename_send, to_send)
                 to_send.close()
             ftp.quit()
         except:
             print("FTP problem of some sort: ", sys.exc_info()[0])
+            raise
 
 
     # Make plots for different zoom levels
