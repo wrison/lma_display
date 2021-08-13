@@ -419,7 +419,7 @@ if __name__ == '__main__':
     lng,state.geo_min_lat,backaz = g.fwd(state.network.ctr_lng,state.network.ctr_lat,180,400e3)
 
     # Set up some additional filenames for saving to EOL
-    state.do_eol_upload = True
+    state.do_eol_upload = False
     if state.do_eol_upload:
         eol_basename = "gis.{0}_LMA.%Y%m%d%H%M.{0}_composite".format(state.location)
         state.eol_pngname = end_time.strftime(eol_basename+".png")
