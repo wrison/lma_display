@@ -518,7 +518,6 @@ if __name__ == '__main__':
             ftp.quit()
         except:
             print("FTP problem of some sort: ", sys.exc_info()[0])
-            raise
 
 
     # Make plots for different zoom levels
