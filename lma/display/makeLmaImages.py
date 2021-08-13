@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 '''
-makeLmaImages.py makes LMA images from realtime LMA data files.  
+makeLmaImages.py makes LMA images from realtime LMA data files.
 
 Every minute, ten-minute and two-minute images are created.  Ten-minute images
 are for the last ten minutes of LMA data; two-minute images are for the past two
@@ -53,7 +53,7 @@ def mkdir_p(path):
             pass
         else:
             raise
-       
+
 # Function to read configuration file
 def ReadConfFile(conf_file):
     fp = open(conf_file,"r")
@@ -122,8 +122,12 @@ def Plot_Geo(ax):
     if (width > 1600):
         img2 = img.crop((width-1600,0,width,1600))
         img2.save(state.www_dir + "/geo_images/" + state.location + "_Composite.png")
+        if state.do_eol_upload:
+            img2.save(state.www_dir + "/geo_images/" + state.eol_pngname)
     else:
         img.save(state.www_dir + "/geo_images/" + state.location + "_Composite.png")
+        if state.do_eol_upload:
+            img.save(state.www_dir + "/geo_images/" + state.eol_pngname)
 
 # Function to plot plan position data.  Can plot color by points, color by time, or density.  Can make large plots or small plots
 # thumbnails.
@@ -201,7 +205,7 @@ def Plot_NS(ax,p_type):
                 if (np.amax(yz) < 2):
                     yz[1,1] = 2   # If at most one source per pixel LogNorm doesn't plot correctly; set one pixel to have two sources
                 ax.imshow(yz,norm=LogNorm(),cmap=state.den_cm,extent=(0.0,20.0,-pz,pz),origin='lower',zorder=6,aspect='auto')
-    
+
         ax.set_xlim(0.0,20.0)
         ax.set_ylim(-pz,pz)
         ax.set_xlabel('Altitude, km',size=8)
@@ -254,7 +258,7 @@ def Plot_TA(ax,p_type):
                     tz[1,1] = 2   # If at most one source per pixel LogNorm doesn't plot correctly; set one pixel to have two sources
                 ax.imshow(tz,norm=LogNorm(),cmap=state.den_cm, extent=(0, end_time_sec-start_time_sec, 0.0,20.0),
                           origin='lower',zorder=6,aspect='auto')
-    
+
         ax.axis([0.0, end_time_sec-start_time_sec,  0.0, 20.0])
         ax.grid(True)
         ax.set_ylabel('Altitude, km',size=8)
@@ -315,7 +319,7 @@ def Plot_Hist(ax):
             ax.text(x1+(x2-x1)*0.4,y1+(y2-y1)*0.1,"0 sources",size=6)
             ax.set_xlim([0,100])
 
-    
+
 if __name__ == '__main__':
     # Let's find out how long it takes to execute
     mystarttime = datetime.datetime.now()
@@ -364,7 +368,7 @@ if __name__ == '__main__':
             ll = line.split()
             state.stations = np.append(state.stations,[[float(ll[3]),float(ll[4]),float(ll[5])]],axis=0)
 
-            
+
     os.chdir(display_dir)
 
     # Read map background for plan plots
@@ -379,7 +383,7 @@ if __name__ == '__main__':
                 state.poi = state.data['poi']
 
 
-    # Find the time for making images.  The time is the last minute of data.  For example, if 
+    # Find the time for making images.  The time is the last minute of data.  For example, if
     # the time is 13:39, ten-minute files go from 13:30 to 13:40 (13:39 file has data
     # from 13:39:00 to 13:40:00)
     year = int(sys.argv[1])
@@ -406,13 +410,24 @@ if __name__ == '__main__':
         fname = home + '/lma/recent/' + state.prefix + "_" + filetime.strftime("%y%m%d_%H%M%S") + "_0060.npy"
         if (os.path.isfile(fname)):
             state.lma = np.append(state.lma,np.load(fname),axis=0)
-        
+
     rows,cols = state.lma.shape
     g = pyproj.Geod(ellps='WGS84')
     state.geo_min_lng,lat,backaz = g.fwd(state.network.ctr_lng,state.network.ctr_lat,270,400e3)
     state.geo_max_lng,lat,backaz = g.fwd(state.network.ctr_lng,state.network.ctr_lat,90,400e3)
     lng,state.geo_max_lat,backaz = g.fwd(state.network.ctr_lng,state.network.ctr_lat,0,400e3)
     lng,state.geo_min_lat,backaz = g.fwd(state.network.ctr_lng,state.network.ctr_lat,180,400e3)
+
+    # Set up some additional filenames for saving to EOL
+    state.do_eol_upload = True
+    if state.do_eol_upload:
+        eol_basename = "gis.{0}_LMA.%Y%m%d%H%M.{0}_composite".format(state.location)
+        state.eol_pngname = end_time.strftime(eol_basename+".png")
+        state.eol_kmlname = end_time.strftime(eol_basename+".kml")
+        eol_base_url = "https://catalog.eol.ucar.edu/arm_tracer/gis/{0}_lma/%Y%m%d/%H/".format((state.location).lower())
+        state.eol_catalogurl = end_time.strftime(eol_base_url + eol_pngname)
+        state.eol_ftpserver = "catalog.eol.ucar.edu"
+        state.eol_ftppath = "/pub/incoming/catalog/tracer"
 
     # Plot ten minute geo-referenced transparent PNG
     start_time = end_time - datetime.timedelta(minutes=10)
@@ -421,10 +436,10 @@ if __name__ == '__main__':
     st = calendar.timegm(start_time.utctimetuple())
     state.lma_t = ((state.lma[:,0] - st) + state.lma[:,1])
     if (rows > 1):
-        keep, = np.nonzero((state.lma[:,5] > state.lma_limits['min_chi2']) & (state.lma[:,5] < state.lma_limits['max_chi2']) & 
+        keep, = np.nonzero((state.lma[:,5] > state.lma_limits['min_chi2']) & (state.lma[:,5] < state.lma_limits['max_chi2']) &
              (state.lma[:,4]  > state.lma_limits['min_alt'])  & (state.lma[:,4] < state.lma_limits['max_alt']) &
-             (state.lma[:,2]  > state.geo_min_lat)  & (state.lma[:,2]  < state.geo_max_lat)  & 
-             (state.lma[:,3]  > state.geo_min_lng)  & (state.lma[:,3]  < state.geo_max_lng)  & 
+             (state.lma[:,2]  > state.geo_min_lat)  & (state.lma[:,2]  < state.geo_max_lat)  &
+             (state.lma[:,3]  > state.geo_min_lng)  & (state.lma[:,3]  < state.geo_max_lng)  &
              (state.lma[:,7] >= state.lma_limits['min_numsta']) &
              (state.lma_t > 0.0) )
     # Need these dimensions so plot is 1600 x 1600 pixels
@@ -460,10 +475,51 @@ if __name__ == '__main__':
     fin.close()
     fout.close()
     shutil.move(home + "/lma/tmp/" + outname,state.www_dir + "/geo_images/" + outname)
+    if state.do_eol_upload:
+        fin = open("proto_files/GE_realtime.kml","r")
+        outname = state.eol_kmlname
+        fout = open(home + "/lma/tmp/" + outname,"w")
+        myrand = str(random.randint(1000,9999))
+        for line in fin:
+            if "LOCATION" in line:
+                line = line.replace("LOCATION",state.location)
+            if "CTR_LNG" in line:
+                line = line.replace("CTR_LNG",str(state.network.ctr_lng))
+            if "CTR_LAT" in line:
+                line = line.replace("CTR_LAT",str(state.network.ctr_lat))
+            if "CBAR_URL" in line:
+                line = line.replace("CBAR_URL",str(state.cbar_url) + "?r=" + myrand)
+            if "IMAGE_URL" in line:
+                line = line.replace("IMAGE_URL",str(state.eol_catalogurl) + "?r=" + myrand)
+            if "NORTH" in line:
+                line = line.replace("NORTH",str(state.geo_max_lat))
+            if "SOUTH" in line:
+                line = line.replace("SOUTH",str(state.geo_min_lat))
+            if "EAST" in line:
+                line = line.replace("EAST",str(state.geo_max_lng))
+            if "WEST" in line:
+                line = line.replace("WEST",str(state.geo_min_lng))
+            fout.write(line)
+        fin.close()
+        fout.close()
+        shutil.move(home + "/lma/tmp/" + outname,state.www_dir + "/geo_images/" + outname)
+        try:
+            # FTP the KML and PNG to EOL
+            from ftplib import FTP
+            ftp = FTP(state.eol_ftpserver)  # connect to host, default port
+            ftp.login()                     # user anonymous, passwd anonymous@
+            ftp.cwd(state.eol_ftppath)      # change into "debian" directory
+            for filename_send in (outname, state.eol_pngname)
+                to_send = open(state.www_dir + "/geo_images/" + filename_send,'rb')
+                ftp.storbinary(filenamesend, to_send)
+                to_send.close()
+            ftp.quit()
+        except:
+            print("FTP problem of some sort: ", sys.exc_info()[0])
 
 
     # Make plots for different zoom levels
-    # Format of a plot_list element is:  zoom; time ('t'), points ('p'), density ('d') or geo_located ('g'); minutes; 
+    # Format of a plot_list element is:  zoom; time ('t'), points ('p'), density ('d') or geo_located ('g'); minutes;
     #                                    filename suffix, current ('c'), archive ('r') and/or animation ('a')
     plot_list = []
     if ((minute % 10) == 9):
@@ -506,7 +562,7 @@ if __name__ == '__main__':
             print("Unknown zoom level: " + str(p[5]))
             continue
         pz = p[0]
-        pl = p[2] 
+        pl = p[2]
         start_time = end_time - datetime.timedelta(minutes=pl)
         start_time_sec = start_time.hour*3600 + start_time.minute*60
         end_time_sec = end_time.hour*3600 + end_time.minute*60
@@ -520,12 +576,12 @@ if __name__ == '__main__':
         max_lng = lma_util.xy2ll(pz*1000.0,0.0,ctr_lat,ctr_lng)[1]
         keep = []
         if (rows > 1):
-            keep, = np.nonzero((state.lma[:,5] > state.lma_limits['min_chi2']) & (state.lma[:,5] < state.lma_limits['max_chi2']) & 
+            keep, = np.nonzero((state.lma[:,5] > state.lma_limits['min_chi2']) & (state.lma[:,5] < state.lma_limits['max_chi2']) &
                  (state.lma[:,4]  > state.lma_limits['min_alt'])  & (state.lma[:,4] < state.lma_limits['max_alt']) &
-                 (state.lma[:,9]  > (state.lma_limits['centerX'] - state.lma_limits['span']))  & 
-                 (state.lma[:,9]  < (state.lma_limits['centerX'] + state.lma_limits['span']))  & 
-                 (state.lma[:,10]  > (state.lma_limits['centerY'] - state.lma_limits['span']))  & 
-                 (state.lma[:,10]  < (state.lma_limits['centerY'] + state.lma_limits['span']))  & 
+                 (state.lma[:,9]  > (state.lma_limits['centerX'] - state.lma_limits['span']))  &
+                 (state.lma[:,9]  < (state.lma_limits['centerX'] + state.lma_limits['span']))  &
+                 (state.lma[:,10]  > (state.lma_limits['centerY'] - state.lma_limits['span']))  &
+                 (state.lma[:,10]  < (state.lma_limits['centerY'] + state.lma_limits['span']))  &
                  (state.lma[:,7] >= state.lma_limits['min_numsta']) &
                  (state.lma_t > 0.0) )
 
@@ -545,7 +601,7 @@ if __name__ == '__main__':
         #ax_plan.set_facecolor((245.0/255.0, 245.0/255.0, 245.0/255.0))
         ax_ns = plt.subplot(G[6:, 4])
         #ax_ns.set_facecolor((245.0/255.0, 245.0/255.0, 245.0/255.0))
-        
+
         Plot_NS(ax_ns,p[1])
         Plot_EW(ax_ew,p[1])
         Plot_TA(ax_ta,p[1])
